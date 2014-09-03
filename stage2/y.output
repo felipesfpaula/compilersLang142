@@ -1,0 +1,1413 @@
+   0  $accept : program $end
+
+   1  program : Decl_var program
+   2          | Decl_fun program
+   3          |
+
+   4  Decl_fun : Type TK_IDENTIFIER '(' Arg_lst ')' Command ';'
+
+   5  Type : KW_WORD
+   6       | KW_BOOL
+   7       | KW_BYTE
+
+   8  Literal : LIT_INTEGER
+   9          | LIT_FALSE
+  10          | LIT_TRUE
+  11          | LIT_CHAR
+  12          | LIT_STRING
+
+  13  Decl_var : Type TK_IDENTIFIER ':' Literal ';'
+  14           | Type '$' TK_IDENTIFIER ':' Literal ';'
+  15           | Type TK_IDENTIFIER '[' LIT_INTEGER ']' ';'
+  16           | Type TK_IDENTIFIER '[' LIT_INTEGER ']' ':' Literal_lst ';'
+
+  17  Literal_lst : Literal Literal_lst
+  18              | Literal
+
+  19  Arg_lst : Type TK_IDENTIFIER Arg_lst_tail
+  20          |
+
+  21  Arg_lst_tail : ',' Type TK_IDENTIFIER Arg_lst_tail
+  22               |
+
+  23  Op_logical : OPERATOR_LE
+  24             | OPERATOR_GE
+  25             | OPERATOR_EQ
+  26             | OPERATOR_NE
+  27             | OPERATOR_AND
+  28             | OPERATOR_OR
+  29             | '<'
+  30             | '>'
+
+  31  Op_numerical : '+'
+  32               | '-'
+  33               | '*'
+  34               | '/'
+
+  35  Exp : LIT_INTEGER
+  36      | LIT_TRUE
+  37      | LIT_FALSE
+  38      | LIT_CHAR
+  39      | TK_IDENTIFIER
+  40      | '$' TK_IDENTIFIER
+  41      | '&' TK_IDENTIFIER
+  42      | TK_IDENTIFIER '(' Id ')'
+  43      | Exp Op_logical Exp
+  44      | Exp Op_numerical Exp
+  45      | '(' Exp ')'
+
+  46  Id : TK_IDENTIFIER Id_lst_tail
+  47     | Literal Id_lst_tail
+  48     |
+
+  49  Id_lst_tail : ',' TK_IDENTIFIER Id_lst_tail
+  50              | ',' Literal Id_lst_tail
+  51              |
+
+  52  Command : Atr
+  53          | KW_RETURN Exp
+  54          | Input
+  55          | Output
+  56          | KW_IF '(' Exp ')' KW_THEN Command
+  57          | KW_IF '(' Exp ')' KW_LOOP Command
+  58          | KW_IF '(' Exp ')' KW_ELSE Command
+  59          | Block
+
+  60  Input : KW_INPUT TK_IDENTIFIER
+
+  61  Output : KW_OUTPUT Item_lst
+
+  62  Item : LIT_STRING
+  63       | Exp
+
+  64  Item_lst : Item Item_lst_tail
+
+  65  Item_lst_tail : ',' Item_lst
+  66                |
+
+  67  Command_lst : Command ';' Command_lst
+  68              |
+
+  69  Block : '{' Command_lst '}'
+  70        |
+
+  71  Atr : TK_IDENTIFIER '=' Exp
+  72      | TK_IDENTIFIER '[' Exp ']' '=' Exp
+
+state 0
+	$accept : . program $end  (0)
+	program : .  (3)
+
+	KW_WORD  shift 1
+	KW_BOOL  shift 2
+	KW_BYTE  shift 3
+	$end  reduce 3
+
+	program  goto 4
+	Decl_var  goto 5
+	Decl_fun  goto 6
+	Type  goto 7
+
+
+state 1
+	Type : KW_WORD .  (5)
+
+	.  reduce 5
+
+
+state 2
+	Type : KW_BOOL .  (6)
+
+	.  reduce 6
+
+
+state 3
+	Type : KW_BYTE .  (7)
+
+	.  reduce 7
+
+
+state 4
+	$accept : program . $end  (0)
+
+	$end  accept
+
+
+state 5
+	program : Decl_var . program  (1)
+	program : .  (3)
+
+	KW_WORD  shift 1
+	KW_BOOL  shift 2
+	KW_BYTE  shift 3
+	$end  reduce 3
+
+	program  goto 8
+	Decl_var  goto 5
+	Decl_fun  goto 6
+	Type  goto 7
+
+
+state 6
+	program : Decl_fun . program  (2)
+	program : .  (3)
+
+	KW_WORD  shift 1
+	KW_BOOL  shift 2
+	KW_BYTE  shift 3
+	$end  reduce 3
+
+	program  goto 9
+	Decl_var  goto 5
+	Decl_fun  goto 6
+	Type  goto 7
+
+
+state 7
+	Decl_fun : Type . TK_IDENTIFIER '(' Arg_lst ')' Command ';'  (4)
+	Decl_var : Type . TK_IDENTIFIER ':' Literal ';'  (13)
+	Decl_var : Type . '$' TK_IDENTIFIER ':' Literal ';'  (14)
+	Decl_var : Type . TK_IDENTIFIER '[' LIT_INTEGER ']' ';'  (15)
+	Decl_var : Type . TK_IDENTIFIER '[' LIT_INTEGER ']' ':' Literal_lst ';'  (16)
+
+	TK_IDENTIFIER  shift 10
+	'$'  shift 11
+	.  error
+
+
+state 8
+	program : Decl_var program .  (1)
+
+	.  reduce 1
+
+
+state 9
+	program : Decl_fun program .  (2)
+
+	.  reduce 2
+
+
+state 10
+	Decl_fun : Type TK_IDENTIFIER . '(' Arg_lst ')' Command ';'  (4)
+	Decl_var : Type TK_IDENTIFIER . ':' Literal ';'  (13)
+	Decl_var : Type TK_IDENTIFIER . '[' LIT_INTEGER ']' ';'  (15)
+	Decl_var : Type TK_IDENTIFIER . '[' LIT_INTEGER ']' ':' Literal_lst ';'  (16)
+
+	'('  shift 12
+	':'  shift 13
+	'['  shift 14
+	.  error
+
+
+state 11
+	Decl_var : Type '$' . TK_IDENTIFIER ':' Literal ';'  (14)
+
+	TK_IDENTIFIER  shift 15
+	.  error
+
+
+state 12
+	Decl_fun : Type TK_IDENTIFIER '(' . Arg_lst ')' Command ';'  (4)
+	Arg_lst : .  (20)
+
+	KW_WORD  shift 1
+	KW_BOOL  shift 2
+	KW_BYTE  shift 3
+	')'  reduce 20
+
+	Type  goto 16
+	Arg_lst  goto 17
+
+
+state 13
+	Decl_var : Type TK_IDENTIFIER ':' . Literal ';'  (13)
+
+	LIT_INTEGER  shift 18
+	LIT_FALSE  shift 19
+	LIT_TRUE  shift 20
+	LIT_CHAR  shift 21
+	LIT_STRING  shift 22
+	.  error
+
+	Literal  goto 23
+
+
+state 14
+	Decl_var : Type TK_IDENTIFIER '[' . LIT_INTEGER ']' ';'  (15)
+	Decl_var : Type TK_IDENTIFIER '[' . LIT_INTEGER ']' ':' Literal_lst ';'  (16)
+
+	LIT_INTEGER  shift 24
+	.  error
+
+
+state 15
+	Decl_var : Type '$' TK_IDENTIFIER . ':' Literal ';'  (14)
+
+	':'  shift 25
+	.  error
+
+
+state 16
+	Arg_lst : Type . TK_IDENTIFIER Arg_lst_tail  (19)
+
+	TK_IDENTIFIER  shift 26
+	.  error
+
+
+state 17
+	Decl_fun : Type TK_IDENTIFIER '(' Arg_lst . ')' Command ';'  (4)
+
+	')'  shift 27
+	.  error
+
+
+state 18
+	Literal : LIT_INTEGER .  (8)
+
+	.  reduce 8
+
+
+state 19
+	Literal : LIT_FALSE .  (9)
+
+	.  reduce 9
+
+
+state 20
+	Literal : LIT_TRUE .  (10)
+
+	.  reduce 10
+
+
+state 21
+	Literal : LIT_CHAR .  (11)
+
+	.  reduce 11
+
+
+state 22
+	Literal : LIT_STRING .  (12)
+
+	.  reduce 12
+
+
+state 23
+	Decl_var : Type TK_IDENTIFIER ':' Literal . ';'  (13)
+
+	';'  shift 28
+	.  error
+
+
+state 24
+	Decl_var : Type TK_IDENTIFIER '[' LIT_INTEGER . ']' ';'  (15)
+	Decl_var : Type TK_IDENTIFIER '[' LIT_INTEGER . ']' ':' Literal_lst ';'  (16)
+
+	']'  shift 29
+	.  error
+
+
+state 25
+	Decl_var : Type '$' TK_IDENTIFIER ':' . Literal ';'  (14)
+
+	LIT_INTEGER  shift 18
+	LIT_FALSE  shift 19
+	LIT_TRUE  shift 20
+	LIT_CHAR  shift 21
+	LIT_STRING  shift 22
+	.  error
+
+	Literal  goto 30
+
+
+state 26
+	Arg_lst : Type TK_IDENTIFIER . Arg_lst_tail  (19)
+	Arg_lst_tail : .  (22)
+
+	','  shift 31
+	')'  reduce 22
+
+	Arg_lst_tail  goto 32
+
+
+state 27
+	Decl_fun : Type TK_IDENTIFIER '(' Arg_lst ')' . Command ';'  (4)
+	Block : .  (70)
+
+	KW_IF  shift 33
+	KW_INPUT  shift 34
+	KW_RETURN  shift 35
+	KW_OUTPUT  shift 36
+	TK_IDENTIFIER  shift 37
+	'{'  shift 38
+	';'  reduce 70
+
+	Command  goto 39
+	Atr  goto 40
+	Input  goto 41
+	Output  goto 42
+	Block  goto 43
+
+
+state 28
+	Decl_var : Type TK_IDENTIFIER ':' Literal ';' .  (13)
+
+	.  reduce 13
+
+
+state 29
+	Decl_var : Type TK_IDENTIFIER '[' LIT_INTEGER ']' . ';'  (15)
+	Decl_var : Type TK_IDENTIFIER '[' LIT_INTEGER ']' . ':' Literal_lst ';'  (16)
+
+	';'  shift 44
+	':'  shift 45
+	.  error
+
+
+state 30
+	Decl_var : Type '$' TK_IDENTIFIER ':' Literal . ';'  (14)
+
+	';'  shift 46
+	.  error
+
+
+state 31
+	Arg_lst_tail : ',' . Type TK_IDENTIFIER Arg_lst_tail  (21)
+
+	KW_WORD  shift 1
+	KW_BOOL  shift 2
+	KW_BYTE  shift 3
+	.  error
+
+	Type  goto 47
+
+
+state 32
+	Arg_lst : Type TK_IDENTIFIER Arg_lst_tail .  (19)
+
+	.  reduce 19
+
+
+state 33
+	Command : KW_IF . '(' Exp ')' KW_THEN Command  (56)
+	Command : KW_IF . '(' Exp ')' KW_LOOP Command  (57)
+	Command : KW_IF . '(' Exp ')' KW_ELSE Command  (58)
+
+	'('  shift 48
+	.  error
+
+
+state 34
+	Input : KW_INPUT . TK_IDENTIFIER  (60)
+
+	TK_IDENTIFIER  shift 49
+	.  error
+
+
+state 35
+	Command : KW_RETURN . Exp  (53)
+
+	TK_IDENTIFIER  shift 50
+	LIT_INTEGER  shift 51
+	LIT_FALSE  shift 52
+	LIT_TRUE  shift 53
+	LIT_CHAR  shift 54
+	'('  shift 55
+	'$'  shift 56
+	'&'  shift 57
+	.  error
+
+	Exp  goto 58
+
+
+state 36
+	Output : KW_OUTPUT . Item_lst  (61)
+
+	TK_IDENTIFIER  shift 50
+	LIT_INTEGER  shift 51
+	LIT_FALSE  shift 52
+	LIT_TRUE  shift 53
+	LIT_CHAR  shift 54
+	LIT_STRING  shift 59
+	'('  shift 55
+	'$'  shift 56
+	'&'  shift 57
+	.  error
+
+	Exp  goto 60
+	Item_lst  goto 61
+	Item  goto 62
+
+
+state 37
+	Atr : TK_IDENTIFIER . '=' Exp  (71)
+	Atr : TK_IDENTIFIER . '[' Exp ']' '=' Exp  (72)
+
+	'['  shift 63
+	'='  shift 64
+	.  error
+
+
+state 38
+	Block : '{' . Command_lst '}'  (69)
+	Command_lst : .  (68)
+	Block : .  (70)
+
+	KW_IF  shift 33
+	KW_INPUT  shift 34
+	KW_RETURN  shift 35
+	KW_OUTPUT  shift 36
+	TK_IDENTIFIER  shift 37
+	'{'  shift 38
+	';'  reduce 70
+	'}'  reduce 68
+
+	Command  goto 65
+	Atr  goto 40
+	Input  goto 41
+	Output  goto 42
+	Block  goto 43
+	Command_lst  goto 66
+
+
+state 39
+	Decl_fun : Type TK_IDENTIFIER '(' Arg_lst ')' Command . ';'  (4)
+
+	';'  shift 67
+	.  error
+
+
+state 40
+	Command : Atr .  (52)
+
+	.  reduce 52
+
+
+state 41
+	Command : Input .  (54)
+
+	.  reduce 54
+
+
+state 42
+	Command : Output .  (55)
+
+	.  reduce 55
+
+
+state 43
+	Command : Block .  (59)
+
+	.  reduce 59
+
+
+state 44
+	Decl_var : Type TK_IDENTIFIER '[' LIT_INTEGER ']' ';' .  (15)
+
+	.  reduce 15
+
+
+state 45
+	Decl_var : Type TK_IDENTIFIER '[' LIT_INTEGER ']' ':' . Literal_lst ';'  (16)
+
+	LIT_INTEGER  shift 18
+	LIT_FALSE  shift 19
+	LIT_TRUE  shift 20
+	LIT_CHAR  shift 21
+	LIT_STRING  shift 22
+	.  error
+
+	Literal  goto 68
+	Literal_lst  goto 69
+
+
+state 46
+	Decl_var : Type '$' TK_IDENTIFIER ':' Literal ';' .  (14)
+
+	.  reduce 14
+
+
+state 47
+	Arg_lst_tail : ',' Type . TK_IDENTIFIER Arg_lst_tail  (21)
+
+	TK_IDENTIFIER  shift 70
+	.  error
+
+
+state 48
+	Command : KW_IF '(' . Exp ')' KW_THEN Command  (56)
+	Command : KW_IF '(' . Exp ')' KW_LOOP Command  (57)
+	Command : KW_IF '(' . Exp ')' KW_ELSE Command  (58)
+
+	TK_IDENTIFIER  shift 50
+	LIT_INTEGER  shift 51
+	LIT_FALSE  shift 52
+	LIT_TRUE  shift 53
+	LIT_CHAR  shift 54
+	'('  shift 55
+	'$'  shift 56
+	'&'  shift 57
+	.  error
+
+	Exp  goto 71
+
+
+state 49
+	Input : KW_INPUT TK_IDENTIFIER .  (60)
+
+	.  reduce 60
+
+
+state 50
+	Exp : TK_IDENTIFIER .  (39)
+	Exp : TK_IDENTIFIER . '(' Id ')'  (42)
+
+	'('  shift 72
+	OPERATOR_LE  reduce 39
+	OPERATOR_GE  reduce 39
+	OPERATOR_EQ  reduce 39
+	OPERATOR_NE  reduce 39
+	OPERATOR_AND  reduce 39
+	OPERATOR_OR  reduce 39
+	'<'  reduce 39
+	'>'  reduce 39
+	'+'  reduce 39
+	'-'  reduce 39
+	'*'  reduce 39
+	'/'  reduce 39
+	')'  reduce 39
+	';'  reduce 39
+	']'  reduce 39
+	','  reduce 39
+
+
+state 51
+	Exp : LIT_INTEGER .  (35)
+
+	.  reduce 35
+
+
+state 52
+	Exp : LIT_FALSE .  (37)
+
+	.  reduce 37
+
+
+state 53
+	Exp : LIT_TRUE .  (36)
+
+	.  reduce 36
+
+
+state 54
+	Exp : LIT_CHAR .  (38)
+
+	.  reduce 38
+
+
+state 55
+	Exp : '(' . Exp ')'  (45)
+
+	TK_IDENTIFIER  shift 50
+	LIT_INTEGER  shift 51
+	LIT_FALSE  shift 52
+	LIT_TRUE  shift 53
+	LIT_CHAR  shift 54
+	'('  shift 55
+	'$'  shift 56
+	'&'  shift 57
+	.  error
+
+	Exp  goto 73
+
+
+state 56
+	Exp : '$' . TK_IDENTIFIER  (40)
+
+	TK_IDENTIFIER  shift 74
+	.  error
+
+
+state 57
+	Exp : '&' . TK_IDENTIFIER  (41)
+
+	TK_IDENTIFIER  shift 75
+	.  error
+
+
+state 58
+	Exp : Exp . Op_logical Exp  (43)
+	Exp : Exp . Op_numerical Exp  (44)
+	Command : KW_RETURN Exp .  (53)
+
+	OPERATOR_LE  shift 76
+	OPERATOR_GE  shift 77
+	OPERATOR_EQ  shift 78
+	OPERATOR_NE  shift 79
+	OPERATOR_AND  shift 80
+	OPERATOR_OR  shift 81
+	'<'  shift 82
+	'>'  shift 83
+	'+'  shift 84
+	'-'  shift 85
+	'*'  shift 86
+	'/'  shift 87
+	';'  reduce 53
+
+	Op_logical  goto 88
+	Op_numerical  goto 89
+
+
+state 59
+	Item : LIT_STRING .  (62)
+
+	.  reduce 62
+
+
+state 60
+	Exp : Exp . Op_logical Exp  (43)
+	Exp : Exp . Op_numerical Exp  (44)
+	Item : Exp .  (63)
+
+	OPERATOR_LE  shift 76
+	OPERATOR_GE  shift 77
+	OPERATOR_EQ  shift 78
+	OPERATOR_NE  shift 79
+	OPERATOR_AND  shift 80
+	OPERATOR_OR  shift 81
+	'<'  shift 82
+	'>'  shift 83
+	'+'  shift 84
+	'-'  shift 85
+	'*'  shift 86
+	'/'  shift 87
+	';'  reduce 63
+	','  reduce 63
+
+	Op_logical  goto 88
+	Op_numerical  goto 89
+
+
+state 61
+	Output : KW_OUTPUT Item_lst .  (61)
+
+	.  reduce 61
+
+
+state 62
+	Item_lst : Item . Item_lst_tail  (64)
+	Item_lst_tail : .  (66)
+
+	','  shift 90
+	';'  reduce 66
+
+	Item_lst_tail  goto 91
+
+
+state 63
+	Atr : TK_IDENTIFIER '[' . Exp ']' '=' Exp  (72)
+
+	TK_IDENTIFIER  shift 50
+	LIT_INTEGER  shift 51
+	LIT_FALSE  shift 52
+	LIT_TRUE  shift 53
+	LIT_CHAR  shift 54
+	'('  shift 55
+	'$'  shift 56
+	'&'  shift 57
+	.  error
+
+	Exp  goto 92
+
+
+state 64
+	Atr : TK_IDENTIFIER '=' . Exp  (71)
+
+	TK_IDENTIFIER  shift 50
+	LIT_INTEGER  shift 51
+	LIT_FALSE  shift 52
+	LIT_TRUE  shift 53
+	LIT_CHAR  shift 54
+	'('  shift 55
+	'$'  shift 56
+	'&'  shift 57
+	.  error
+
+	Exp  goto 93
+
+
+state 65
+	Command_lst : Command . ';' Command_lst  (67)
+
+	';'  shift 94
+	.  error
+
+
+state 66
+	Block : '{' Command_lst . '}'  (69)
+
+	'}'  shift 95
+	.  error
+
+
+state 67
+	Decl_fun : Type TK_IDENTIFIER '(' Arg_lst ')' Command ';' .  (4)
+
+	.  reduce 4
+
+
+state 68
+	Literal_lst : Literal . Literal_lst  (17)
+	Literal_lst : Literal .  (18)
+
+	LIT_INTEGER  shift 18
+	LIT_FALSE  shift 19
+	LIT_TRUE  shift 20
+	LIT_CHAR  shift 21
+	LIT_STRING  shift 22
+	';'  reduce 18
+
+	Literal  goto 68
+	Literal_lst  goto 96
+
+
+state 69
+	Decl_var : Type TK_IDENTIFIER '[' LIT_INTEGER ']' ':' Literal_lst . ';'  (16)
+
+	';'  shift 97
+	.  error
+
+
+state 70
+	Arg_lst_tail : ',' Type TK_IDENTIFIER . Arg_lst_tail  (21)
+	Arg_lst_tail : .  (22)
+
+	','  shift 31
+	')'  reduce 22
+
+	Arg_lst_tail  goto 98
+
+
+state 71
+	Exp : Exp . Op_logical Exp  (43)
+	Exp : Exp . Op_numerical Exp  (44)
+	Command : KW_IF '(' Exp . ')' KW_THEN Command  (56)
+	Command : KW_IF '(' Exp . ')' KW_LOOP Command  (57)
+	Command : KW_IF '(' Exp . ')' KW_ELSE Command  (58)
+
+	OPERATOR_LE  shift 76
+	OPERATOR_GE  shift 77
+	OPERATOR_EQ  shift 78
+	OPERATOR_NE  shift 79
+	OPERATOR_AND  shift 80
+	OPERATOR_OR  shift 81
+	'<'  shift 82
+	'>'  shift 83
+	'+'  shift 84
+	'-'  shift 85
+	'*'  shift 86
+	'/'  shift 87
+	')'  shift 99
+	.  error
+
+	Op_logical  goto 88
+	Op_numerical  goto 89
+
+
+state 72
+	Exp : TK_IDENTIFIER '(' . Id ')'  (42)
+	Id : .  (48)
+
+	TK_IDENTIFIER  shift 100
+	LIT_INTEGER  shift 18
+	LIT_FALSE  shift 19
+	LIT_TRUE  shift 20
+	LIT_CHAR  shift 21
+	LIT_STRING  shift 22
+	')'  reduce 48
+
+	Literal  goto 101
+	Id  goto 102
+
+
+state 73
+	Exp : Exp . Op_logical Exp  (43)
+	Exp : Exp . Op_numerical Exp  (44)
+	Exp : '(' Exp . ')'  (45)
+
+	OPERATOR_LE  shift 76
+	OPERATOR_GE  shift 77
+	OPERATOR_EQ  shift 78
+	OPERATOR_NE  shift 79
+	OPERATOR_AND  shift 80
+	OPERATOR_OR  shift 81
+	'<'  shift 82
+	'>'  shift 83
+	'+'  shift 84
+	'-'  shift 85
+	'*'  shift 86
+	'/'  shift 87
+	')'  shift 103
+	.  error
+
+	Op_logical  goto 88
+	Op_numerical  goto 89
+
+
+state 74
+	Exp : '$' TK_IDENTIFIER .  (40)
+
+	.  reduce 40
+
+
+state 75
+	Exp : '&' TK_IDENTIFIER .  (41)
+
+	.  reduce 41
+
+
+state 76
+	Op_logical : OPERATOR_LE .  (23)
+
+	.  reduce 23
+
+
+state 77
+	Op_logical : OPERATOR_GE .  (24)
+
+	.  reduce 24
+
+
+state 78
+	Op_logical : OPERATOR_EQ .  (25)
+
+	.  reduce 25
+
+
+state 79
+	Op_logical : OPERATOR_NE .  (26)
+
+	.  reduce 26
+
+
+state 80
+	Op_logical : OPERATOR_AND .  (27)
+
+	.  reduce 27
+
+
+state 81
+	Op_logical : OPERATOR_OR .  (28)
+
+	.  reduce 28
+
+
+state 82
+	Op_logical : '<' .  (29)
+
+	.  reduce 29
+
+
+state 83
+	Op_logical : '>' .  (30)
+
+	.  reduce 30
+
+
+state 84
+	Op_numerical : '+' .  (31)
+
+	.  reduce 31
+
+
+state 85
+	Op_numerical : '-' .  (32)
+
+	.  reduce 32
+
+
+state 86
+	Op_numerical : '*' .  (33)
+
+	.  reduce 33
+
+
+state 87
+	Op_numerical : '/' .  (34)
+
+	.  reduce 34
+
+
+state 88
+	Exp : Exp Op_logical . Exp  (43)
+
+	TK_IDENTIFIER  shift 50
+	LIT_INTEGER  shift 51
+	LIT_FALSE  shift 52
+	LIT_TRUE  shift 53
+	LIT_CHAR  shift 54
+	'('  shift 55
+	'$'  shift 56
+	'&'  shift 57
+	.  error
+
+	Exp  goto 104
+
+
+state 89
+	Exp : Exp Op_numerical . Exp  (44)
+
+	TK_IDENTIFIER  shift 50
+	LIT_INTEGER  shift 51
+	LIT_FALSE  shift 52
+	LIT_TRUE  shift 53
+	LIT_CHAR  shift 54
+	'('  shift 55
+	'$'  shift 56
+	'&'  shift 57
+	.  error
+
+	Exp  goto 105
+
+
+state 90
+	Item_lst_tail : ',' . Item_lst  (65)
+
+	TK_IDENTIFIER  shift 50
+	LIT_INTEGER  shift 51
+	LIT_FALSE  shift 52
+	LIT_TRUE  shift 53
+	LIT_CHAR  shift 54
+	LIT_STRING  shift 59
+	'('  shift 55
+	'$'  shift 56
+	'&'  shift 57
+	.  error
+
+	Exp  goto 60
+	Item_lst  goto 106
+	Item  goto 62
+
+
+state 91
+	Item_lst : Item Item_lst_tail .  (64)
+
+	.  reduce 64
+
+
+state 92
+	Exp : Exp . Op_logical Exp  (43)
+	Exp : Exp . Op_numerical Exp  (44)
+	Atr : TK_IDENTIFIER '[' Exp . ']' '=' Exp  (72)
+
+	OPERATOR_LE  shift 76
+	OPERATOR_GE  shift 77
+	OPERATOR_EQ  shift 78
+	OPERATOR_NE  shift 79
+	OPERATOR_AND  shift 80
+	OPERATOR_OR  shift 81
+	'<'  shift 82
+	'>'  shift 83
+	'+'  shift 84
+	'-'  shift 85
+	'*'  shift 86
+	'/'  shift 87
+	']'  shift 107
+	.  error
+
+	Op_logical  goto 88
+	Op_numerical  goto 89
+
+
+state 93
+	Exp : Exp . Op_logical Exp  (43)
+	Exp : Exp . Op_numerical Exp  (44)
+	Atr : TK_IDENTIFIER '=' Exp .  (71)
+
+	OPERATOR_LE  shift 76
+	OPERATOR_GE  shift 77
+	OPERATOR_EQ  shift 78
+	OPERATOR_NE  shift 79
+	OPERATOR_AND  shift 80
+	OPERATOR_OR  shift 81
+	'<'  shift 82
+	'>'  shift 83
+	'+'  shift 84
+	'-'  shift 85
+	'*'  shift 86
+	'/'  shift 87
+	';'  reduce 71
+
+	Op_logical  goto 88
+	Op_numerical  goto 89
+
+
+state 94
+	Command_lst : Command ';' . Command_lst  (67)
+	Command_lst : .  (68)
+	Block : .  (70)
+
+	KW_IF  shift 33
+	KW_INPUT  shift 34
+	KW_RETURN  shift 35
+	KW_OUTPUT  shift 36
+	TK_IDENTIFIER  shift 37
+	'{'  shift 38
+	';'  reduce 70
+	'}'  reduce 68
+
+	Command  goto 65
+	Atr  goto 40
+	Input  goto 41
+	Output  goto 42
+	Block  goto 43
+	Command_lst  goto 108
+
+
+state 95
+	Block : '{' Command_lst '}' .  (69)
+
+	.  reduce 69
+
+
+state 96
+	Literal_lst : Literal Literal_lst .  (17)
+
+	.  reduce 17
+
+
+state 97
+	Decl_var : Type TK_IDENTIFIER '[' LIT_INTEGER ']' ':' Literal_lst ';' .  (16)
+
+	.  reduce 16
+
+
+state 98
+	Arg_lst_tail : ',' Type TK_IDENTIFIER Arg_lst_tail .  (21)
+
+	.  reduce 21
+
+
+state 99
+	Command : KW_IF '(' Exp ')' . KW_THEN Command  (56)
+	Command : KW_IF '(' Exp ')' . KW_LOOP Command  (57)
+	Command : KW_IF '(' Exp ')' . KW_ELSE Command  (58)
+
+	KW_THEN  shift 109
+	KW_ELSE  shift 110
+	KW_LOOP  shift 111
+	.  error
+
+
+state 100
+	Id : TK_IDENTIFIER . Id_lst_tail  (46)
+	Id_lst_tail : .  (51)
+
+	','  shift 112
+	')'  reduce 51
+
+	Id_lst_tail  goto 113
+
+
+state 101
+	Id : Literal . Id_lst_tail  (47)
+	Id_lst_tail : .  (51)
+
+	','  shift 112
+	')'  reduce 51
+
+	Id_lst_tail  goto 114
+
+
+state 102
+	Exp : TK_IDENTIFIER '(' Id . ')'  (42)
+
+	')'  shift 115
+	.  error
+
+
+state 103
+	Exp : '(' Exp ')' .  (45)
+
+	.  reduce 45
+
+
+104: shift/reduce conflict (shift 76, reduce 43) on OPERATOR_LE
+104: shift/reduce conflict (shift 77, reduce 43) on OPERATOR_GE
+104: shift/reduce conflict (shift 78, reduce 43) on OPERATOR_EQ
+104: shift/reduce conflict (shift 79, reduce 43) on OPERATOR_NE
+104: shift/reduce conflict (shift 80, reduce 43) on OPERATOR_AND
+104: shift/reduce conflict (shift 81, reduce 43) on OPERATOR_OR
+104: shift/reduce conflict (shift 82, reduce 43) on '<'
+104: shift/reduce conflict (shift 83, reduce 43) on '>'
+104: shift/reduce conflict (shift 84, reduce 43) on '+'
+104: shift/reduce conflict (shift 85, reduce 43) on '-'
+104: shift/reduce conflict (shift 86, reduce 43) on '*'
+104: shift/reduce conflict (shift 87, reduce 43) on '/'
+state 104
+	Exp : Exp . Op_logical Exp  (43)
+	Exp : Exp Op_logical Exp .  (43)
+	Exp : Exp . Op_numerical Exp  (44)
+
+	OPERATOR_LE  shift 76
+	OPERATOR_GE  shift 77
+	OPERATOR_EQ  shift 78
+	OPERATOR_NE  shift 79
+	OPERATOR_AND  shift 80
+	OPERATOR_OR  shift 81
+	'<'  shift 82
+	'>'  shift 83
+	'+'  shift 84
+	'-'  shift 85
+	'*'  shift 86
+	'/'  shift 87
+	')'  reduce 43
+	';'  reduce 43
+	']'  reduce 43
+	','  reduce 43
+
+	Op_logical  goto 88
+	Op_numerical  goto 89
+
+
+105: shift/reduce conflict (shift 76, reduce 44) on OPERATOR_LE
+105: shift/reduce conflict (shift 77, reduce 44) on OPERATOR_GE
+105: shift/reduce conflict (shift 78, reduce 44) on OPERATOR_EQ
+105: shift/reduce conflict (shift 79, reduce 44) on OPERATOR_NE
+105: shift/reduce conflict (shift 80, reduce 44) on OPERATOR_AND
+105: shift/reduce conflict (shift 81, reduce 44) on OPERATOR_OR
+105: shift/reduce conflict (shift 82, reduce 44) on '<'
+105: shift/reduce conflict (shift 83, reduce 44) on '>'
+105: shift/reduce conflict (shift 84, reduce 44) on '+'
+105: shift/reduce conflict (shift 85, reduce 44) on '-'
+105: shift/reduce conflict (shift 86, reduce 44) on '*'
+105: shift/reduce conflict (shift 87, reduce 44) on '/'
+state 105
+	Exp : Exp . Op_logical Exp  (43)
+	Exp : Exp . Op_numerical Exp  (44)
+	Exp : Exp Op_numerical Exp .  (44)
+
+	OPERATOR_LE  shift 76
+	OPERATOR_GE  shift 77
+	OPERATOR_EQ  shift 78
+	OPERATOR_NE  shift 79
+	OPERATOR_AND  shift 80
+	OPERATOR_OR  shift 81
+	'<'  shift 82
+	'>'  shift 83
+	'+'  shift 84
+	'-'  shift 85
+	'*'  shift 86
+	'/'  shift 87
+	')'  reduce 44
+	';'  reduce 44
+	']'  reduce 44
+	','  reduce 44
+
+	Op_logical  goto 88
+	Op_numerical  goto 89
+
+
+state 106
+	Item_lst_tail : ',' Item_lst .  (65)
+
+	.  reduce 65
+
+
+state 107
+	Atr : TK_IDENTIFIER '[' Exp ']' . '=' Exp  (72)
+
+	'='  shift 116
+	.  error
+
+
+state 108
+	Command_lst : Command ';' Command_lst .  (67)
+
+	.  reduce 67
+
+
+state 109
+	Command : KW_IF '(' Exp ')' KW_THEN . Command  (56)
+	Block : .  (70)
+
+	KW_IF  shift 33
+	KW_INPUT  shift 34
+	KW_RETURN  shift 35
+	KW_OUTPUT  shift 36
+	TK_IDENTIFIER  shift 37
+	'{'  shift 38
+	';'  reduce 70
+
+	Command  goto 117
+	Atr  goto 40
+	Input  goto 41
+	Output  goto 42
+	Block  goto 43
+
+
+state 110
+	Command : KW_IF '(' Exp ')' KW_ELSE . Command  (58)
+	Block : .  (70)
+
+	KW_IF  shift 33
+	KW_INPUT  shift 34
+	KW_RETURN  shift 35
+	KW_OUTPUT  shift 36
+	TK_IDENTIFIER  shift 37
+	'{'  shift 38
+	';'  reduce 70
+
+	Command  goto 118
+	Atr  goto 40
+	Input  goto 41
+	Output  goto 42
+	Block  goto 43
+
+
+state 111
+	Command : KW_IF '(' Exp ')' KW_LOOP . Command  (57)
+	Block : .  (70)
+
+	KW_IF  shift 33
+	KW_INPUT  shift 34
+	KW_RETURN  shift 35
+	KW_OUTPUT  shift 36
+	TK_IDENTIFIER  shift 37
+	'{'  shift 38
+	';'  reduce 70
+
+	Command  goto 119
+	Atr  goto 40
+	Input  goto 41
+	Output  goto 42
+	Block  goto 43
+
+
+state 112
+	Id_lst_tail : ',' . TK_IDENTIFIER Id_lst_tail  (49)
+	Id_lst_tail : ',' . Literal Id_lst_tail  (50)
+
+	TK_IDENTIFIER  shift 120
+	LIT_INTEGER  shift 18
+	LIT_FALSE  shift 19
+	LIT_TRUE  shift 20
+	LIT_CHAR  shift 21
+	LIT_STRING  shift 22
+	.  error
+
+	Literal  goto 121
+
+
+state 113
+	Id : TK_IDENTIFIER Id_lst_tail .  (46)
+
+	.  reduce 46
+
+
+state 114
+	Id : Literal Id_lst_tail .  (47)
+
+	.  reduce 47
+
+
+state 115
+	Exp : TK_IDENTIFIER '(' Id ')' .  (42)
+
+	.  reduce 42
+
+
+state 116
+	Atr : TK_IDENTIFIER '[' Exp ']' '=' . Exp  (72)
+
+	TK_IDENTIFIER  shift 50
+	LIT_INTEGER  shift 51
+	LIT_FALSE  shift 52
+	LIT_TRUE  shift 53
+	LIT_CHAR  shift 54
+	'('  shift 55
+	'$'  shift 56
+	'&'  shift 57
+	.  error
+
+	Exp  goto 122
+
+
+state 117
+	Command : KW_IF '(' Exp ')' KW_THEN Command .  (56)
+
+	.  reduce 56
+
+
+state 118
+	Command : KW_IF '(' Exp ')' KW_ELSE Command .  (58)
+
+	.  reduce 58
+
+
+state 119
+	Command : KW_IF '(' Exp ')' KW_LOOP Command .  (57)
+
+	.  reduce 57
+
+
+state 120
+	Id_lst_tail : ',' TK_IDENTIFIER . Id_lst_tail  (49)
+	Id_lst_tail : .  (51)
+
+	','  shift 112
+	')'  reduce 51
+
+	Id_lst_tail  goto 123
+
+
+state 121
+	Id_lst_tail : ',' Literal . Id_lst_tail  (50)
+	Id_lst_tail : .  (51)
+
+	','  shift 112
+	')'  reduce 51
+
+	Id_lst_tail  goto 124
+
+
+state 122
+	Exp : Exp . Op_logical Exp  (43)
+	Exp : Exp . Op_numerical Exp  (44)
+	Atr : TK_IDENTIFIER '[' Exp ']' '=' Exp .  (72)
+
+	OPERATOR_LE  shift 76
+	OPERATOR_GE  shift 77
+	OPERATOR_EQ  shift 78
+	OPERATOR_NE  shift 79
+	OPERATOR_AND  shift 80
+	OPERATOR_OR  shift 81
+	'<'  shift 82
+	'>'  shift 83
+	'+'  shift 84
+	'-'  shift 85
+	'*'  shift 86
+	'/'  shift 87
+	';'  reduce 72
+
+	Op_logical  goto 88
+	Op_numerical  goto 89
+
+
+state 123
+	Id_lst_tail : ',' TK_IDENTIFIER Id_lst_tail .  (49)
+
+	.  reduce 49
+
+
+state 124
+	Id_lst_tail : ',' Literal Id_lst_tail .  (50)
+
+	.  reduce 50
+
+
+State 104 contains 12 shift/reduce conflicts.
+State 105 contains 12 shift/reduce conflicts.
+
+
+43 terminals, 23 nonterminals
+73 grammar rules, 125 states
